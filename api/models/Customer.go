@@ -2,6 +2,7 @@ package models
 
 import (
 	"errors"
+	"fmt"
 	"html"
 	"strings"
 	"time"
@@ -12,7 +13,7 @@ import (
 
 
 type Customer struct {
-	ID uint			`gorm:"primary_key;auto_increment" json:"id"`
+	ID int		`gorm:"primary_key;auto_increment" json:"id"`
 	Name string			`gorm:"size:100;not null" json:"name"`
 	Surname string		`gorm:"size:100;not null" json:"surname"`
 	Birthday time.Time	`json:"birthday"`
@@ -24,11 +25,9 @@ type Customer struct {
 }
 
 func (u *Customer) Prepare() {
-	u.ID = 0
 	u.Name = html.EscapeString(strings.TrimSpace(u.Name))
 	u.Surname = html.EscapeString(strings.TrimSpace(u.Surname))
 	u.Email = html.EscapeString(strings.TrimSpace(u.Email))
-	u.CreatedAt = time.Now()
 	u.UpdatedAt = time.Now()
 }
 
@@ -63,7 +62,7 @@ func (u *Customer) Validate(action string) error {
 func (u *Customer) FindAllCustomers(db *gorm.DB) (*[]Customer, error) {
 	var err error
 	users := []Customer{}
-	err = db.Debug().Model(&Customer{}).Limit(100).Find(&users).Error
+	err = db.Debug().Model(&Customer{}).Find(&users).Error
 	if err != nil {
 		return &[]Customer{}, err
 	}
@@ -80,7 +79,7 @@ func (u *Customer) SaveCustomer(db *gorm.DB) (*Customer, error) {
 	return u, nil
 }
 
-func (u *Customer) FindCustomerByID(db *gorm.DB, id uint32) (*Customer, error) {
+func (u *Customer) FindCustomerByID(db *gorm.DB, id string) (*Customer, error) {
 	var err error
 	err = db.Debug().Model(Customer{}).Where("id = ?", id).Take(&u).Error
 	if err != nil {
@@ -92,9 +91,11 @@ func (u *Customer) FindCustomerByID(db *gorm.DB, id uint32) (*Customer, error) {
 	return u, err
 }
 
-func (u *Customer) UpdateACustomer(db *gorm.DB, id int) (*Customer, error) {
+func (u *Customer) UpdateACustomer(db *gorm.DB) (*Customer, error) {
 
-	db = db.Debug().Model(&Customer{}).Where("id = ?", id).Take(&Customer{}).UpdateColumns(
+	fmt.Printf("%#v \n\n  potato \n", u)
+
+	db = db.Debug().Model(&Customer{}).Where("id = ?", u.ID).Take(&Customer{}).UpdateColumns(
 		map[string]interface{}{
 			"name":  u.Name,
 			"surname":  u.Surname,
@@ -109,16 +110,26 @@ func (u *Customer) UpdateACustomer(db *gorm.DB, id int) (*Customer, error) {
 	if db.Error != nil {
 		return &Customer{}, db.Error
 	}
-	err := db.Debug().Model(&Customer{}).Where("id = ?", id).Take(&u).Error
+	err := db.Debug().Model(&Customer{}).Where("id = ?", u.ID).Take(&u).Error
 	if err != nil {
 		return &Customer{}, err
 	}
 	return u, nil
 }
 
-func (u *Customer) DeleteACustomer(db *gorm.DB, id uint32) (int64, error) {
+func (u *Customer) DeleteACustomer(db *gorm.DB, id string) (int64, error) {
 
 	db = db.Debug().Model(&Customer{}).Where("id = ?", id).Take(&Customer{}).Delete(&Customer{})
+
+	if db.Error != nil {
+		return 0, db.Error
+	}
+	return db.RowsAffected, nil
+}
+
+func (u *Customer) FindCustomers(db *gorm.DB, search string) (int64, error) {
+
+	db = db.Debug().Model(&Customer{}).Where("name LIKE %%s%", search).Or("surname LIKE %%s%", search)
 
 	if db.Error != nil {
 		return 0, db.Error

@@ -10,7 +10,7 @@ import (
 
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 
-	"github.com/kartuludus/wallaster-test-task-be/api/models"
+	"github.com/kartuludus/wallaster-be/api/models"
 )
 
 type Server struct {
@@ -25,7 +25,7 @@ func (server *Server) Initialize(DbUser, DbPassword, DbPort, DbHost, DbName stri
 	DBURL := fmt.Sprintf("host=%s port=%s user=%s dbname=%s sslmode=disable password=%s", DbHost, DbPort, DbUser, DbName, DbPassword)
 	server.DB, err = gorm.Open("postgres", DBURL)
 	if err != nil {
-		fmt.Printf("Cannot connect to postgres database")
+		fmt.Printf("Cannot connect to postgres database %s \n", DBURL)
 		log.Fatal("This is the error:", err)
 	} else {
 		fmt.Printf("We are connected to the postgres database")
