@@ -126,13 +126,3 @@ func (u *Customer) DeleteACustomer(db *gorm.DB, id string) (int64, error) {
 	}
 	return db.RowsAffected, nil
 }
-
-func (u *Customer) FindCustomers(db *gorm.DB, search string) (int64, error) {
-
-	db = db.Debug().Model(&Customer{}).Where("name LIKE %%s%", search).Or("surname LIKE %%s%", search)
-
-	if db.Error != nil {
-		return 0, db.Error
-	}
-	return db.RowsAffected, nil
-}

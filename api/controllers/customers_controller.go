@@ -54,19 +54,6 @@ func (server *Server) GetCustomers(w http.ResponseWriter, r *http.Request) {
 	responses.JSON(w, http.StatusOK, users)
 }
 
-func (server *Server) FindCustomers(w http.ResponseWriter, r *http.Request) {
-
-	vars := mux.Vars(r)
-	user := models.Customer{}
-
-	users, err := user.FindCustomers(server.DB, vars["search"])
-	if err != nil {
-		responses.ERROR(w, http.StatusInternalServerError, err)
-		return
-	}
-	responses.JSON(w, http.StatusOK, users)
-}
-
 func (server *Server) GetCustomer(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)

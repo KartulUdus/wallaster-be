@@ -12,7 +12,6 @@ func (s *Server) initializeRoutes() {
 	s.Router.HandleFunc("/customers", middlewares.SetMiddlewareJSON(s.CreateCustomer)).Methods("POST")
 	s.Router.HandleFunc("/customers", middlewares.SetMiddlewareJSON(s.GetCustomers)).Methods("GET")
 	s.Router.HandleFunc("/customers/{id}", middlewares.SetMiddlewareJSON(s.GetCustomer)).Methods("GET")
-	s.Router.HandleFunc("/customers/search/{search}", middlewares.SetMiddlewareJSON(s.FindCustomers)).Methods("GET")
 	s.Router.HandleFunc("/customers/update", middlewares.SetMiddlewareJSON(s.UpdateCustomer)).Methods("POST")
 
 }
