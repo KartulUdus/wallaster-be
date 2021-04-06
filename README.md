@@ -19,4 +19,8 @@ go run main.go
 You should get an output confirming database migration, seeding and `Listening to port 8080`
 
 ## Run tests
-TBD
+
+To run full test suite, run
+```bash
+go test -v ./test/...
+```
