@@ -80,7 +80,6 @@ func (server *Server) UpdateCustomer(w http.ResponseWriter, r *http.Request) {
 		responses.ERROR(w, http.StatusUnprocessableEntity, err)
 		return
 	}
-	fmt.Printf("%#v \n\n  vars \n", user)
 
 	err = user.Validate("update")
 	if err != nil {

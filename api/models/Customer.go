@@ -2,7 +2,6 @@ package models
 
 import (
 	"errors"
-	"fmt"
 	"html"
 	"strings"
 	"time"
@@ -92,8 +91,6 @@ func (u *Customer) FindCustomerByID(db *gorm.DB, id string) (*Customer, error) {
 }
 
 func (u *Customer) UpdateACustomer(db *gorm.DB) (*Customer, error) {
-
-	fmt.Printf("%#v \n\n  potato \n", u)
 
 	db = db.Debug().Model(&Customer{}).Where("id = ?", u.ID).Take(&Customer{}).UpdateColumns(
 		map[string]interface{}{
